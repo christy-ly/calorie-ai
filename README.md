@@ -1,4 +1,4 @@
-<h3 align="center">🥗 Calorie Count – An AI Powered Applicaiton</h3>
+<h3 align="center">🥗 Calorie AI – An AI Powered Applicaiton</h3>
 
 
 ## 💬 Overview
@@ -28,7 +28,8 @@ to build scalable applications more efficiently.
 ## 📁 Folder Structure
 
 ## 📽️View Demo
-Check out the live demo of this project here:
+Check out the live demo of this project here: [View Demo](https://christy-demo-calorie-ai.netlify.app/)
+
 
 ## 📚 References
 
