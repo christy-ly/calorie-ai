@@ -26,6 +26,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | Styling | Tailwind CSS |
 | Database | SQLite via Prisma v7 |
 | DB Adapter | `@prisma/adapter-better-sqlite3` |
+| AI | Google Gemini via `@google/genai` |
 | Runtime | Node.js 24 |
 
 ## Folder Structure
@@ -42,7 +43,10 @@ calorie-ai/
 │   │   ├── layout.tsx       # Root layout
 │   │   └── api/
 │   │       ├── foods/       # GET ?q= — search foods
-│   │       └── entries/     # GET today's log, POST add, DELETE remove
+│   │       ├── entries/     # GET today's log, POST add, DELETE remove
+│   │       └── ai/
+│   │           ├── nutrition/ # POST — text-based AI nutrition estimate
+│   │           └── image/     # POST — image-based AI nutrition estimate
 │   ├── components/
 │   │   ├── CalorieSummary   # Sticky header with calorie total + macro bars
 │   │   ├── SearchBar        # Debounced search with keyboard nav
@@ -55,8 +59,9 @@ calorie-ai/
 │   │   └── useCalorieLog    # All state + API calls
 │   ├── lib/
 │   │   ├── prisma.ts        # Singleton PrismaClient with SQLite adapter
+│   │   ├── gemini.ts        # Gemini client + estimateFromText/estimateFromImage helpers
 │   │   ├── foods.ts         # 25-food FOODS constant (seed source of truth)
-│   │   └── types.ts         # Shared interfaces
+│   │   └── types.ts         # Shared interfaces (incl. NutritionEstimate)
 │   └── generated/prisma/    # Prisma v7 generated client (gitignore-able)
 ├── docs/
 │   └── 2026-04-28-initial-build.md
@@ -98,11 +103,11 @@ New routes go in `src/app/api/`. Import `prisma` from `@/lib/prisma`. Use `NextR
 | Variable | Purpose |
 |----------|---------|
 | `DATABASE_URL` | SQLite file path — set to `file:./dev.db` by Prisma init |
-| `GEMINI_API_KEY` | Reserved for future AI food search feature |
+| `GEMINI_API_KEY` | Google Gemini API key — used by `/api/ai/nutrition` and `/api/ai/image` |
 
 ## What's Next
 
-- AI food search using Gemini API (key already in `.env`)
+- Frontend integration of AI nutrition routes (UI for text/image lookup)
 - Custom calorie goal setting
 - Weekly summary view
 - Custom food entry (user-defined foods)

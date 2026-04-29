@@ -25,3 +25,23 @@ export interface DailyTotals {
   carbs: number;
   fat: number;
 }
+
+export interface NutritionItem {
+  name: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  servingSize: string;
+}
+
+export interface NutritionEstimate {
+  description: string;
+  items: NutritionItem[];
+  totals: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+  };
+}
