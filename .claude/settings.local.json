@@ -5,7 +5,9 @@
       "Bash(echo \"PID: $!\")",
       "Bash(curl -s -X POST http://localhost:3000/api/ai/nutrition -H 'Content-Type: application/json' -d '{\"description\":\"smoked beef with salad\"}')",
       "Bash(python3 -m json.tool)",
-      "Bash(curl -s -X POST http://localhost:3000/api/ai/image -F 'image=@/System/Library/Desktop Pictures/Sonoma.heic')"
+      "Bash(curl -s -X POST http://localhost:3000/api/ai/image -F 'image=@/System/Library/Desktop Pictures/Sonoma.heic')",
+      "Bash(npx tsc *)",
+      "Bash(kill 7095)"
     ]
   }
 }

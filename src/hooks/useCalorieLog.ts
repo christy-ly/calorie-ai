@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Food, FoodEntryWithFood, DailyTotals } from '@/lib/types';
+import { Food, FoodEntryWithFood, DailyTotals, NutritionItem } from '@/lib/types';
 
 interface CalorieLogState {
   entries: FoodEntryWithFood[];
@@ -9,6 +9,7 @@ interface CalorieLogState {
   allFoods: Food[];
   loading: boolean;
   addEntry: (foodId: number) => Promise<void>;
+  addAiEntry: (item: NutritionItem) => Promise<void>;
   deleteEntry: (id: number) => Promise<void>;
 }
 
@@ -46,10 +47,19 @@ export function useCalorieLog(): CalorieLogState {
     await fetchEntries();
   }, [fetchEntries]);
 
+  const addAiEntry = useCallback(async (item: NutritionItem) => {
+    await fetch('/api/ai/log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(item),
+    });
+    await fetchEntries();
+  }, [fetchEntries]);
+
   const deleteEntry = useCallback(async (id: number) => {
     await fetch(`/api/entries/${id}`, { method: 'DELETE' });
     await fetchEntries();
   }, [fetchEntries]);
 
-  return { entries, totals, allFoods, loading, addEntry, deleteEntry };
+  return { entries, totals, allFoods, loading, addEntry, addAiEntry, deleteEntry };
 }

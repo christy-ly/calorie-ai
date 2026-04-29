@@ -46,7 +46,8 @@ calorie-ai/
 │   │       ├── entries/     # GET today's log, POST add, DELETE remove
 │   │       └── ai/
 │   │           ├── nutrition/ # POST — text-based AI nutrition estimate
-│   │           └── image/     # POST — image-based AI nutrition estimate
+│   │           ├── image/     # POST — image-based AI nutrition estimate
+│   │           └── log/       # POST — upsert AI food + create FoodEntry
 │   ├── components/
 │   │   ├── CalorieSummary   # Sticky header with calorie total + macro bars
 │   │   ├── SearchBar        # Debounced search with keyboard nav
@@ -57,6 +58,10 @@ calorie-ai/
 │   │   └── MacroBadge       # Colored P/C/F pill
 │   ├── hooks/
 │   │   └── useCalorieLog    # All state + API calls
+│   ├── components/
+│   │   ├── ...              # existing components unchanged
+│   │   ├── AiTextSearch     # Text input → AI nutrition → add to log
+│   │   └── AiImageSearch    # Image upload → preview → confirm items → add to log
 │   ├── lib/
 │   │   ├── prisma.ts        # Singleton PrismaClient with SQLite adapter
 │   │   ├── gemini.ts        # Gemini client + estimateFromText/estimateFromImage helpers
@@ -107,7 +112,6 @@ New routes go in `src/app/api/`. Import `prisma` from `@/lib/prisma`. Use `NextR
 
 ## What's Next
 
-- Frontend integration of AI nutrition routes (UI for text/image lookup)
 - Custom calorie goal setting
 - Weekly summary view
 - Custom food entry (user-defined foods)
