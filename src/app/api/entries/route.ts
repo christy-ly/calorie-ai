@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { supabase } from '@/lib/supabase';
 
 function todayBounds() {
   const start = new Date();
@@ -11,13 +11,17 @@ function todayBounds() {
 
 export async function GET() {
   const { start, end } = todayBounds();
-  const entries = await prisma.foodEntry.findMany({
-    where: { loggedAt: { gte: start, lte: end } },
-    include: { food: true },
-    orderBy: { loggedAt: 'desc' },
-  });
 
-  const totals = entries.reduce(
+  const { data: entries, error } = await supabase
+    .from('FoodEntry')
+    .select('*, food:Food(*)')
+    .gte('loggedAt', start.toISOString())
+    .lte('loggedAt', end.toISOString())
+    .order('loggedAt', { ascending: false });
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  const totals = (entries ?? []).reduce(
     (acc, e) => ({
       calories: acc.calories + e.food.calories * e.quantity,
       protein: acc.protein + e.food.protein * e.quantity,
@@ -38,15 +42,23 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'foodId is required' }, { status: 400 });
   }
 
-  const food = await prisma.food.findUnique({ where: { id: foodId } });
-  if (!food) {
+  const { data: food, error: foodError } = await supabase
+    .from('Food')
+    .select('id')
+    .eq('id', foodId)
+    .single();
+
+  if (foodError || !food) {
     return NextResponse.json({ error: 'Food not found' }, { status: 404 });
   }
 
-  const entry = await prisma.foodEntry.create({
-    data: { foodId, quantity },
-    include: { food: true },
-  });
+  const { data: entry, error } = await supabase
+    .from('FoodEntry')
+    .insert({ foodId, quantity })
+    .select('*, food:Food(*)')
+    .single();
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   return NextResponse.json({ entry }, { status: 201 });
 }

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { supabase } from '@/lib/supabase';
 
 export async function DELETE(
   _request: NextRequest,
@@ -10,11 +10,18 @@ export async function DELETE(
     return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
   }
 
-  const existing = await prisma.foodEntry.findUnique({ where: { id } });
-  if (!existing) {
+  const { data: existing, error: findError } = await supabase
+    .from('FoodEntry')
+    .select('id')
+    .eq('id', id)
+    .single();
+
+  if (findError || !existing) {
     return NextResponse.json({ error: 'Entry not found' }, { status: 404 });
   }
 
-  await prisma.foodEntry.delete({ where: { id } });
+  const { error } = await supabase.from('FoodEntry').delete().eq('id', id);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
   return NextResponse.json({ success: true });
 }

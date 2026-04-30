@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { supabase } from '@/lib/supabase';
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -9,29 +9,33 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'name is required' }, { status: 400 });
   }
 
-  const food = await prisma.food.upsert({
-    where: { name },
-    create: {
-      name,
-      calories: Math.round(Number(calories)),
-      protein: Number(protein),
-      carbs: Number(carbs),
-      fat: Number(fat),
-      servingSize: servingSize || '1 serving',
-    },
-    update: {
-      calories: Math.round(Number(calories)),
-      protein: Number(protein),
-      carbs: Number(carbs),
-      fat: Number(fat),
-      servingSize: servingSize || '1 serving',
-    },
-  });
+  const { data: food, error: upsertError } = await supabase
+    .from('Food')
+    .upsert(
+      {
+        name,
+        calories: Math.round(Number(calories)),
+        protein: Number(protein),
+        carbs: Number(carbs),
+        fat: Number(fat),
+        servingSize: servingSize || '1 serving',
+      },
+      { onConflict: 'name' }
+    )
+    .select()
+    .single();
 
-  const entry = await prisma.foodEntry.create({
-    data: { foodId: food.id, quantity },
-    include: { food: true },
-  });
+  if (upsertError || !food) {
+    return NextResponse.json({ error: upsertError?.message ?? 'Upsert failed' }, { status: 500 });
+  }
+
+  const { data: entry, error: entryError } = await supabase
+    .from('FoodEntry')
+    .insert({ foodId: food.id, quantity })
+    .select('*, food:Food(*)')
+    .single();
+
+  if (entryError) return NextResponse.json({ error: entryError.message }, { status: 500 });
 
   return NextResponse.json({ entry }, { status: 201 });
 }
