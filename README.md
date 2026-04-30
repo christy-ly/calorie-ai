@@ -7,6 +7,7 @@ This project is a modern frontend web application built using Claude Code and th
 ## 🛠 Tech Stack
 - **Frontend:** Next.js, TypeScript, Tailwind CSS
 - **Backend:** Node.js API routes
+- **Database:** Supabase, PostgreSQL
 - **AI-assisted development:** Claude Code 
 - **AI-powered data & features:** Gemini API
 
@@ -85,6 +86,7 @@ Check out the live demo of this project here: [View Demo](https://christy-demo-c
 ## 📚 References
 - **Claude Code** – [Official Website](https://claude.ai/)
 - **Gemini API** – [Official Website](https://ai.google.dev/)
+- **Supabase** – [Official Documentation](https://supabase.com/docs)
 
 
 
